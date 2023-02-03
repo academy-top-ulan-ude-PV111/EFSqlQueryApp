@@ -171,11 +171,31 @@ namespace EFSqlQueryApp
 
 
                 // HasDbFunction
-                var employes = context.GetByCompanyId(1)
-                                      .Include(e => e.Company);
+                //var employes = context.GetByCompanyId(1)
+                //                      .Include(e => e.Company);
 
-                foreach(var e in employes.ToList())
-                    Console.WriteLine($"{e.Company!.Title} {e.Name}");
+                //SqlParameter param = new("@company", "Yandex");
+
+                //var employes = context.Employes
+                //                      .FromSqlRaw("GetEmployeByCompany @company", param);
+
+                //foreach(var e in employes.ToList())
+                //Console.WriteLine($"{e.Name}");
+
+                SqlParameter[] param = new SqlParameter[]{
+                    new("@company", "Yandex"),
+                    new()
+                    {
+                        ParameterName = "@count",
+                        SqlDbType = System.Data.SqlDbType.Int,
+                        Direction = System.Data.ParameterDirection.Output
+                    },
+                };
+
+                context.Database
+                       .ExecuteSqlRaw("GetCountEmployesByCompany @company, @count OUTPUT", param);
+
+                Console.WriteLine(param[1].Value);
             }
         }
     }
